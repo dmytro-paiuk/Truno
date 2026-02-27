@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Truno", "Truno\Truno.csproj", "{06BCE469-FFD3-4752-9416-96B806A6EC24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrunoWebApp", "TrunoWebApp\TrunoWebApp.csproj", "{0F4D0E92-D48A-4FC1-929C-E47EACFFAE18}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06BCE469-FFD3-4752-9416-96B806A6EC24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06BCE469-FFD3-4752-9416-96B806A6EC24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06BCE469-FFD3-4752-9416-96B806A6EC24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06BCE469-FFD3-4752-9416-96B806A6EC24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F4D0E92-D48A-4FC1-929C-E47EACFFAE18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F4D0E92-D48A-4FC1-929C-E47EACFFAE18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F4D0E92-D48A-4FC1-929C-E47EACFFAE18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F4D0E92-D48A-4FC1-929C-E47EACFFAE18}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

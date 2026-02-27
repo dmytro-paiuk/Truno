@@ -1,0 +1,46 @@
+@page "/item-master-download"
+@using TrunoWebApp.Services
+@inject ItemMasterSyncService SyncService
+
+<h3>Download Item Master</h3>
+
+<button class="btn btn-primary" @onclick="Run" disabled="@_running">
+    Download Items
+</button>
+
+<p>@_status</p>
+
+@code {
+    private bool _running;
+    private string _status = "";
+
+    private async Task Run()
+    {
+        _running = true;
+        _status = "Starting...";
+        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            var total = await SyncService.SyncAsync(s =>
+            {
+                _ = InvokeAsync(() =>
+                {
+                    _status = s;
+                    StateHasChanged();
+                });
+            }, CancellationToken.None);
+
+            _status = $"Done. Total saved: {total}";
+        }
+        catch (Exception ex)
+        {
+            _status = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            _running = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

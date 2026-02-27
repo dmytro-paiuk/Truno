@@ -1,0 +1,107 @@
+@page "/item-master"
+@using TrunoWebApp.Data.Entities
+@rendermode InteractiveServer
+@inject Services.ItemMasterReadService ReadService
+
+<h3>Item Master</h3>
+
+<div style="margin: 12px 0; display:flex; gap:8px;">
+    <input value="@_search" @oninput="OnSearchInput" placeholder="Search UPC/description/brand" />
+    <button class="btn btn-secondary" @onclick="Reload">Search</button>
+</div>
+
+@if (_loading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Total: @_total</p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>UPC</th>
+            <th>Description</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Dept</th>
+            <th>Eff Unit</th>
+            <th>Synced</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var x in _items)
+        {
+            <tr>
+                <td>@x.Id</td>
+                <td>@x.UpcEAN</td>
+                <td>@x.Description</td>
+                <td>@x.BrandName</td>
+                <td>@x.Category</td>
+                <td>@x.Department</td>
+                <td>@x.EffectiveUnitPrice</td>
+                <td>@x.SyncedUtc</td>
+                <td><a href="@($"/item-master/{x.Id}")">Details</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+        <button class="btn btn-outline-primary" @onclick="Prev" disabled="@(_page == 1)">Prev</button>
+        <span>Page @_page</span>
+        <button class="btn btn-outline-primary" @onclick="Next" disabled="@(_items.Count < PageSize)">Next</button>
+    </div>
+}
+
+@code {
+    private const int PageSize = 50;
+
+    private bool _loading = true;
+    private int _page = 1;
+    private int _total;
+    private string? _search;
+    private List<TruCommerceItemEntity> _items = new();
+
+    protected override async Task OnInitializedAsync()
+        => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        await InvokeAsync(StateHasChanged);
+
+        var result = await ReadService.GetItemsAsync(_search, _page, PageSize);
+        _items = result.Items;
+        _total = result.Total;
+
+        _loading = false;
+    }
+
+    private Task OnSearchInput(ChangeEventArgs e)
+    {
+        _search = e.Value?.ToString();
+        return Task.CompletedTask;
+    }
+
+    private async Task Reload()
+    {
+        _page = 1;
+        await LoadAsync();
+    }
+
+    private async Task Prev()
+    {
+        if (_page > 1) _page--;
+        await LoadAsync();
+    }
+
+    private async Task Next()
+    {
+        _page++;
+        await LoadAsync();
+    }
+}

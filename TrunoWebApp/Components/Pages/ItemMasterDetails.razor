@@ -1,0 +1,64 @@
+@page "/item-master/{Id:int}"
+@using TrunoWebApp.Data.Entities
+@rendermode InteractiveServer
+@inject Services.ItemMasterReadService ReadService
+
+<h3>Item Details</h3>
+
+@if (_item is null)
+{
+    <p>Not found.</p>
+}
+else
+{
+    <p>Id: @_item.Id</p>
+    <p>UPC: @_item.UpcEAN</p>
+    <p>Description: @_item.Description</p>
+
+    <h4>Reg Prices</h4>
+
+    @if (_item.RegPrices.Count == 0)
+    {
+        <p>No reg prices.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>RegPriceId</th>
+                <th>Unit</th>
+                <th>Case</th>
+                <th>CaseSize</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Type</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var rp in _item.RegPrices.OrderBy(x => x.RegPriceId))
+            {
+                <tr>
+                    <td>@rp.RegPriceId</td>
+                    <td>@rp.UnitPrice</td>
+                    <td>@rp.CasePrice</td>
+                    <td>@rp.CaseSize</td>
+                    <td>@rp.IpStartDate</td>
+                    <td>@rp.IpEndDate</td>
+                    <td>@rp.PriceType</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private TruCommerceItemEntity? _item;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _item = await ReadService.GetItemWithPricesAsync(Id);
+    }
+}
