@@ -1,0 +1,78 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: '$(BUILD_CONFIGURATION)'
+  projects: |
+    TrunoWebApp/TrunoWebApp.csproj
+
+steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET 9.0'
+    inputs:
+      packageType: 'sdk'
+      version: '9.0.x'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet restore'
+    inputs:
+      command: 'restore'
+      projects: $(projects)
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet build'
+    inputs:
+      command: 'build'
+      arguments: '--configuration $(buildConfiguration)'
+      projects: $(projects)
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet publish'
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: $(projects)
+      arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+      zipAfterPublish: false
+
+  # Debug steps
+  - script: |
+      find $(build.ArtifactStagingDirectory) -type f
+    displayName: 'Print build.ArtifactStagingDirectory'
+
+  - task: CmdLine@2
+    displayName: 'Print ArtifactStagingDirectory'
+    inputs:
+      script: |
+        ls -a
+      workingDirectory: '$(Build.ArtifactStagingDirectory)'
+
+  - task: CmdLine@2
+    displayName: 'Print ArtifactStagingDirectory/TrunoWebApp/wwwroot'
+    inputs:
+      script: |
+        ls -a
+      workingDirectory: '$(Build.ArtifactStagingDirectory)/TrunoWebApp/wwwroot'
+
+  - task: CmdLine@2
+    displayName: 'Print file ArtifactStagingDirectory/TrunoWebApp/wwwroot/staticwebapp.config.json'
+    inputs:
+      script: |
+        cat $(Build.ArtifactStagingDirectory)/TrunoWebApp/wwwroot/staticwebapp.config.json
+      workingDirectory: '$(Build.ArtifactStagingDirectory)/TrunoWebApp/wwwroot'
+    continueOnError: true
+
+  # deploy step
+  - task: AzureStaticWebApp@0
+    displayName: 'Static Web App'
+    inputs:
+      cwd: '$(Build.ArtifactStagingDirectory)'
+      app_location: '/TrunoWebApp/wwwroot/'
+      skip_app_build: true
+      skip_api_build: true
+      output_location: ''
+    env:
+      azure_static_web_apps_api_token: '$(AZURE_STATIC_WEB_APPS_API_TOKEN)'

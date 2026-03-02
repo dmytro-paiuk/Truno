@@ -13,7 +13,7 @@ builder.Services.AddRazorComponents()
     .AddCircuitOptions(o => o.DetailedErrors = true);
 
 builder.Services.AddDbContextFactory<AppDbContext>(opt =>
-    opt.UseSqlServer("Server=localhost,1433;Database=TrunoDb2;User Id=sa;Password=DB_Password;TrustServerCertificate=True;"));
+    opt.UseSqlServer("Server=tcp:grocery-stores-db-server.database.windows.net,1433;Initial Catalog=truno-app;Persist Security Info=False;User ID=serveradmin;Password=hg!fx249kjhfgAtrz913;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=100;"));
 
 
 builder.Services.AddHttpClient("TruCommerce", client =>
